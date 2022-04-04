@@ -1,1 +1,19 @@
-<h1>Hello from Auth GenPwd Component</h1>
+<div class="container">
+  <h4>Password can be generated for IITK students only which is emailed to their institute email addresses.</h4>
+  <hr>
+  <h4>Generate New Password</h4>
+  <hr>
+  <div class="container">
+    <form [formGroup]="genpwdForm">
+      <label for = "username"> Username: </label>
+      <div class="row">
+        <div class="col-10">
+          <input type = "text" formControlName = "username" class = "form-control">
+        </div>
+      </div>
+    </form>
+  </div>
+  <button class="btn btn-primary" (click)="genpwd()">
+    Generate
+  </button>
+</div>

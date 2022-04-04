@@ -1,1 +1,23 @@
-<h1>Hello from Auth Login Component</h1>
+<div class="container">
+  <h4>Login</h4>
+  <hr>
+  <div class="container">
+    <form [formGroup]="loginForm">
+      <label for = "username"> Username: </label>
+      <div class="row">
+        <div class="col-10">
+          <input type = "text" formControlName = "username" class = "form-control">
+        </div>
+      </div>
+      <label for = "password"> Password: </label>
+      <div class="row">
+        <div class="col-10">
+          <input type = "password" formControlName = "password" class = "form-control">
+        </div>
+      </div>
+    </form>
+  </div>
+  <button class="btn btn-primary" (click)="login()">
+    Login
+  </button>
+</div>

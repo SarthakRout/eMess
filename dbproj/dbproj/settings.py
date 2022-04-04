@@ -142,3 +142,14 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFToken'
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'emess.iitk@gmail.com'
+EMAIL_HOST_PASSWORD = None
+import os
+path = os.path.join(os.getcwd(), '../../keys.txt')
+with open(path) as f:
+    EMAIL_HOST_PASSWORD = f.readline().strip('\n')

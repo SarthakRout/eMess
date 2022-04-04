@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthGenpwdComponent } from './auth-genpwd/auth-genpwd.component';
 import { AuthLoginComponent } from './auth-login/auth-login.component';
 import { AuthComponent } from './auth.component';
@@ -11,7 +12,9 @@ import { AuthComponent } from './auth.component';
     AuthGenpwdComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   exports: [
     AuthComponent,
@@ -19,7 +22,6 @@ import { AuthComponent } from './auth.component';
     AuthGenpwdComponent
   ]
 })
-
 export class AuthModule {
 
 }
