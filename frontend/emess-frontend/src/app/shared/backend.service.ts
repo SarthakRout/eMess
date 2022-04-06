@@ -1,11 +1,17 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { GenpwdResponse, LoginResponse } from '../models/auth.model';
 
 @Injectable()
 export class BackendService {
   isLoggedIn = false;
-  constructor(public http: HttpClient) {}
+  currentUser = null;
+  authToken = '';
+  userType = '';
+  constructor(
+    private http: HttpClient,
+    private router: Router) {}
 
   getCookie(name) {
     let cookieValue = null;
@@ -42,6 +48,16 @@ export class BackendService {
         if (res.code === 'success') {
           console.log('Login Successful', res);
           this.isLoggedIn = true;
+          this.currentUser = res.userInfo;
+          this.authToken = res.authToken;
+          this.userType = res.userType;
+          if (this.userType === 'student') {
+            this.router.navigate(['/', 'student']);
+          } else if (this.userType === 'messadmin') {
+            this.router.navigate(['/', 'messadmin']);
+          } else {
+            this.router.navigate(['/', 'auth']);
+          }
           // Redirect to student/admin home page
         } else {
           if (res.code === 'invalid_username') {

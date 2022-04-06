@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackendService } from 'src/app/shared/backend.service';
-
+import * as shajs from 'sha.js';
 @Component({
   selector: 'app-auth-login',
   templateUrl : './auth-login.component.html',
@@ -23,9 +23,10 @@ export class AuthLoginComponent implements OnInit {
     console.log('Initialized auth login component!');
   }
 
-  login() {
+  async login() {
     const username: string = this.loginForm.get('username').value;
     const password: string = this.loginForm.get('password').value;
-    this.backendService.login(username, password);
+    const hashed: string = await shajs('sha384').update(password).digest('hex');
+    this.backendService.login(username, hashed);
   }
 }

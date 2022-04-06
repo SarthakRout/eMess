@@ -11,7 +11,12 @@ class Student(User):
         primary_key=True
     ) 
     parent_hall = models.IntegerField(
-        unique=True,
+        blank=False,
+    )
+    hashpwd = models.CharField(
+        blank=False,
+        max_length=96,
+        default='0'
     )
 
 
@@ -38,6 +43,11 @@ class MessAdmin(User):
         blank=False, 
         max_length=15,
         validators=[uniq_ar]
+    )
+    hashpwd = models.CharField(
+        blank=False,
+        max_length=96,
+        default='0'
     )
 
 class Meal(models.Model):
