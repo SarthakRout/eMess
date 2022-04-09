@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { StudentHomeComponent } from './student-home/student-home.component';
+import { StudentProfileComponent } from './student-profile/student-profile.component';
+import { StudentRoutingModule } from './student-routing.module';
 import { StudentStatComponent } from './student-stat/student-stat.component';
 import { StudentComponent } from './student.component';
 
@@ -8,15 +11,20 @@ import { StudentComponent } from './student.component';
   declarations: [
     StudentComponent,
     StudentHomeComponent,
-    StudentStatComponent
+    StudentStatComponent,
+    StudentProfileComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    StudentRoutingModule,
+    RouterModule
   ],
   exports: [
     StudentComponent,
     StudentHomeComponent,
-    StudentStatComponent
+    StudentStatComponent,
+    StudentProfileComponent,
+    RouterModule
   ]
 })
 

@@ -1,19 +1,26 @@
 <div class="container">
-  <h4>Password can be generated for IITK students only which is emailed to their institute email addresses.</h4>
+  <h2>New user or forgot your password?</h2>
+  <hr>
+  <h5><i>Password can be generated for IITK students only which is emailed to their institute email addresses. If you are an admin and forgot the password, contact eMess IITK Office.</i></h5>
   <hr>
   <h4>Generate New Password</h4>
   <hr>
   <div class="container">
     <form [formGroup]="genpwdForm">
-      <label for = "username"> Roll No: </label>
+      <label for = "username"> Roll Number: </label>
       <div class="row">
         <div class="col-10">
           <input type = "text" formControlName = "username" class = "form-control">
         </div>
       </div>
+      <label for = "button"></label>
+      <div class="row">
+        <div class="col-10">
+          <button class="btn btn-info" (click)="genpwd()">
+            Generate
+          </button>
+        </div>
+      </div>
     </form>
   </div>
-  <button class="btn btn-primary" (click)="genpwd()">
-    Generate
-  </button>
 </div>

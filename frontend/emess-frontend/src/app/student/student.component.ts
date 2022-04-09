@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-student',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class StudentComponent implements OnInit {
-
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
   ngOnInit() {
     console.log('Initialized student component!');
   }
 
+  Show(comp: string) {
+    // this.router.navigate([comp], {
+    //   relativeTo: this.route
+    // });
+  }
 }

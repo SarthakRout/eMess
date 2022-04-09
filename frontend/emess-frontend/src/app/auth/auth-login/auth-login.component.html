@@ -1,5 +1,5 @@
 <div class="container">
-  <h4>Login</h4>
+  <h2>Login</h2>
   <hr>
   <div class="container">
     <form [formGroup]="loginForm">
@@ -15,9 +15,15 @@
           <input type = "password" formControlName = "password" class = "form-control">
         </div>
       </div>
+      <label for = "button"></label>
+      <div class="row">
+        <div class="col-10">
+          <button class="btn btn-success" (click)="login()">
+            Login
+          </button>
+        </div>
+      </div>
     </form>
   </div>
-  <button class="btn btn-primary" (click)="login()">
-    Login
-  </button>
+
 </div>
