@@ -9,7 +9,7 @@ import { AuthComponent } from './auth.component';
   declarations: [
     AuthComponent,
     AuthLoginComponent,
-    AuthGenpwdComponent
+    AuthGenpwdComponent,
   ],
   imports: [
     CommonModule,
@@ -19,7 +19,7 @@ import { AuthComponent } from './auth.component';
   exports: [
     AuthComponent,
     AuthLoginComponent,
-    AuthGenpwdComponent
+    AuthGenpwdComponent,
   ]
 })
 export class AuthModule {

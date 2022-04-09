@@ -1,6 +1,5 @@
 import json
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseForbidden, JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
 from django.core.mail import send_mail
@@ -38,12 +37,23 @@ def login(request):
             if Student.objects.get(username=int(data["username"])).hashpwd == givenhashedpwd:
                 authToken = get_auth_token(data["username"])
                 students[int(data["username"])]['token'] =  authToken
-                return JsonResponse({
+                res = JsonResponse({
                     'code': 'success',
                     'authToken' : authToken,
                     'userType': 'student',
                     'userInfo' : students[int(data["username"])]
                 })
+                res.set_cookie(
+                    'username',
+                    data["username"],
+                    max_age=3600
+                )
+                res.set_cookie(
+                    'authToken',
+                    authToken,
+                    max_age=3600
+                )
+                return res
             else:
                 return JsonResponse({
                     'code': 'invalid_password',
@@ -55,7 +65,7 @@ def login(request):
             if messadmin.hashpwd  == givenhashedpwd:
                 authToken = get_auth_token(data["username"])
                 messadmins[data["username"]]['token'] =  authToken
-                return JsonResponse({
+                res = JsonResponse({
                     'code': 'success',
                     'authToken' : authToken,
                     'userType': 'messAdmin',
@@ -63,6 +73,17 @@ def login(request):
                         'halls' : messadmin.halls
                     }
                 })
+                res.set_cookie(
+                    'username',
+                    data["username"],
+                    max_age=3600
+                )
+                res.set_cookie(
+                    'authToken',
+                    authToken,
+                    max_age=3600
+                )
+                return res
             else:
                 return JsonResponse({
                     'code': 'invalid_password',
@@ -117,7 +138,7 @@ def getpwd(request):
                 hashpwd = hash("secret" + hash(password) + "key")
             )
         else:
-            Student.objects.filter(
+            Student.objects.get(
                 username=int(data["username"])
             ).update(
                 password=password,
@@ -139,5 +160,81 @@ def sendemail(rollno : str, password : str):
     ccuserid = students[int(rollno)]['u'] + "@iitk.ac.in"
     recipients = [ccuserid]
     send_mail(subject, message, email_sender, recipients)
+
+@ensure_csrf_cookie
+def logout(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if ('token' in students[int(data["username"])] 
+                and 
+                students[int(data["username"])]['token'] == data["authToken"]):
+                students[int(data["username"])]['token'] = None
+                res = JsonResponse({
+                    'code' : 'success'
+                })
+                res.delete_cookie('username')
+                res.delete_cookie('authToken')
+                return res
+            else:
+                return JsonResponse({
+                    'code': 'invalid authToken'
+                })
+        elif MessAdmin.objects.filter(username=data["username"]).exists():
+            if 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data['authToken']:
+                messadmins[data["username"]]['token'] = None
+                res = JsonResponse({
+                    'code' : 'success'
+                })
+                res.delete_cookie('username')
+                res.delete_cookie('authToken')
+                return res
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+@ensure_csrf_cookie
+def autologin(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if 'token' in students[int(data["username"])] and students[int(data["username"])]['token'] == data["authToken"]:
+                return JsonResponse({
+                    'code':'success',
+                    'userType': 'student',
+                    'userInfo' : students[int(data["username"])]
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        elif MessAdmin.objects.filter(username=data["username"]).exists():
+            if 'token' in messadmins[data["username"]] and messadmins[int(data["username"])]['token'] == data["authToken"]:
+                messadmin = MessAdmin.objects.get(username=data["username"])
+                return JsonResponse({
+                    'code':'success',
+                    'userType': 'messAdmin',
+                    'userInfo' : {
+                        'halls': messadmin.halls
+                    }
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
 
 init()

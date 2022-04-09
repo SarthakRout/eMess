@@ -1,10 +1,14 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { stringify } from 'querystring';
 import { GenpwdResponse, LoginResponse } from '../models/auth.model';
-
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class BackendService {
+  baseUrl = 'http://127.0.0.1:8000'
+  username = '';
   isLoggedIn = false;
   currentUser = null;
   authToken = '';
@@ -17,6 +21,7 @@ export class BackendService {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
+        // tslint:disable-next-line: prefer-for-of
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
             // Does this cookie string begin with the name we want?
@@ -29,15 +34,15 @@ export class BackendService {
     return cookieValue;
   }
 
-  login(username: string, password: string) {
+  async login(username: string, password: string) {
     const httpOptions = {
       headers: new HttpHeaders({
         'X-CSRFToken': this.getCookie('csrftoken'),
       }),
       withCredentials: true
     };
-    return this.http.post(
-      'http://127.0.0.1:8000/api/login',
+    await this.http.post(
+      this.baseUrl + '/api/login',
       {
         username,
         password
@@ -47,6 +52,7 @@ export class BackendService {
       (res: LoginResponse ) => {
         if (res.code === 'success') {
           console.log('Login Successful', res);
+          this.username = username
           this.isLoggedIn = true;
           this.currentUser = res.userInfo;
           this.authToken = res.authToken;
@@ -75,15 +81,15 @@ export class BackendService {
     );
   }
 
-  genpwd(username: string) {
+  async genpwd(username: string) {
     const httpOptions = {
       headers: new HttpHeaders({
         'X-CSRFToken': this.getCookie('csrftoken'),
       }),
       withCredentials: true
     };
-    return this.http.post(
-      'http://127.0.0.1:8000/api/getpwd',
+    await this.http.post(
+      this.baseUrl + '/api/getpwd',
       {
         username,
       },
@@ -96,7 +102,7 @@ export class BackendService {
           // redirect to login page
         } else {
           if (res.code === 'invalid_roll') {
-            console.log('Invalid roll', res)
+            console.log('Invalid roll', res);
             // Let the user try again
             // Say that roll number is invalid
           } else {
@@ -111,7 +117,80 @@ export class BackendService {
     );
   }
 
-  logout() {
-    console.log('Logout called!');
+  async logout() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    // console.log(stringify(this.username), stringify(this.authToken))
+    await this.http.post(
+      this.baseUrl + '/api/logout',
+      {
+        username: this.username,
+        authToken: this.authToken
+      },
+      httpOptions
+    ).subscribe(
+      (res : any) => {
+        if(res.code == 'success') {
+          this.username = null;
+          this.currentUser = null;
+          this.authToken = null;
+          this.userType = null;
+          console.log('Logged out')
+          this.router.navigate(['/', 'auth']);
+        } else {
+          console.log(res);
+          this.router.navigate(['/', 'auth']);
+        }
+      },
+      (err) => {
+        console.log(err);
+        this.router.navigate(['/', 'auth']);
+      }
+    )
+  }
+
+  async autologin(){
+    const username = this.getCookie('username')
+    const authToken = this.getCookie('authToken')
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/autologin',
+      {
+        username,
+        authToken
+      },
+      httpOptions
+    ).subscribe(
+      (res: any) => {
+        if(res.code == 'success'){
+          this.username = username
+          this.currentUser = res.userInfo;
+          this.authToken = authToken;
+          this.userType = res.userType;
+          if(this.userType == 'student'){
+            this.router.navigate(['/', 'student']);
+          } else {
+            this.router.navigate(['/', 'messadmin']);
+          }
+        } else {
+          console.log(res);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
   }
 }

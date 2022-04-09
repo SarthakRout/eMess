@@ -15,7 +15,7 @@ export class AuthComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     const user = this.backendService.currentUser;
     if (user !== null) {
       if (this.backendService.userType === 'student') {
@@ -23,6 +23,9 @@ export class AuthComponent implements OnInit {
       } else {
         this.router.navigate(['/', 'messadmin']);
       }
+    }
+    else{
+      await this.backendService.autologin();
     }
   }
 

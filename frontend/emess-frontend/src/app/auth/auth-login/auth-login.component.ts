@@ -7,7 +7,6 @@ import * as shajs from 'sha.js';
   templateUrl : './auth-login.component.html',
   styleUrls: ['./auth-login.component.css']
 })
-
 export class AuthLoginComponent implements OnInit {
 
   loginForm: FormGroup;
@@ -27,6 +26,6 @@ export class AuthLoginComponent implements OnInit {
     const username: string = this.loginForm.get('username').value;
     const password: string = this.loginForm.get('password').value;
     const hashed: string = await shajs('sha384').update(password).digest('hex');
-    this.backendService.login(username, hashed);
+    await this.backendService.login(username, hashed);
   }
 }

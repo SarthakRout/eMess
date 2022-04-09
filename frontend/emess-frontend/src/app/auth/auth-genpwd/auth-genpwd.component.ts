@@ -22,8 +22,8 @@ export class AuthGenpwdComponent implements OnInit {
     console.log('Initialized auth genpwd component!');
   }
 
-  genpwd() {
+  async genpwd() {
     const username: string = this.genpwdForm.get('username').value;
-    this.backendService.genpwd(username);
+    await this.backendService.genpwd(username);
   }
 }
