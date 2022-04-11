@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { AdminExtraComponent } from './admin-extra/admin-extra.component';
 import { AdminHallMgmtComponent } from './admin-hallmgmt/admin-hallmgmt.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -12,19 +14,23 @@ import { AdminComponent } from './admin.component';
     AdminComponent,
     AdminHomeComponent,
     AdminHallMgmtComponent,
-    AdminStatComponent
+    AdminStatComponent,
+    AdminExtraComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
-    Router
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule
   ],
   exports: [
     AdminComponent,
     AdminHomeComponent,
     AdminHallMgmtComponent,
     AdminStatComponent,
-    Router
+    AdminExtraComponent,
+    RouterModule
   ]
 })
 

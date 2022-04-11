@@ -1,4 +1,3 @@
-import { stringify } from '@angular/compiler/src/util';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendService } from '../shared/backend.service';
@@ -19,10 +18,8 @@ export class StudentComponent implements OnInit, OnDestroy {
     if (this.backendService.currentUser === null || this.backendService.userType !== 'student') {
       this.router.navigate(['/', 'auth']);
     }
-    // console.log(stringify(this.backendService.username), stringify(this.backendService.authToken));
   }
   ngOnDestroy(){
-    // console.log(stringify(this.backendService.username), stringify(this.backendService.authToken));
   }
   async Logout(){
     await this.backendService.logout();

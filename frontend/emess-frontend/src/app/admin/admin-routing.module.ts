@@ -6,7 +6,7 @@ import { AdminComponent } from './admin.component';
 
 const route: Routes = [
   {
-    path: 'admin',
+    path: 'messadmin',
     component: AdminComponent,
     children: [
       {path: '', redirectTo: 'home', pathMatch: 'full'},

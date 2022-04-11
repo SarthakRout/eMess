@@ -2,7 +2,12 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { stringify } from 'querystring';
+import { BehaviorSubject } from 'rxjs';
 import { GenpwdResponse, LoginResponse } from '../models/auth.model';
+
+export interface meals {
+
+};
 @Injectable({
   providedIn: 'root',
 })
@@ -13,9 +18,12 @@ export class BackendService {
   currentUser = null;
   authToken = '';
   userType = '';
+  hallmeals = {};
+  dataSubject: BehaviorSubject<any> = new BehaviorSubject<any>({});
   constructor(
     private http: HttpClient,
-    private router: Router) {}
+    private router: Router) {
+    }
 
   getCookie(name) {
     let cookieValue = null;
@@ -57,9 +65,11 @@ export class BackendService {
           this.currentUser = res.userInfo;
           this.authToken = res.authToken;
           this.userType = res.userType;
+          this.hallmeals = {};
+          this.dataSubject.next(this.hallmeals);
           if (this.userType === 'student') {
             this.router.navigate(['/', 'student']);
-          } else if (this.userType === 'messadmin') {
+          } else if (this.userType === 'messAdmin') {
             this.router.navigate(['/', 'messadmin']);
           } else {
             this.router.navigate(['/', 'auth']);
@@ -124,7 +134,6 @@ export class BackendService {
       }),
       withCredentials: true
     };
-    // console.log(stringify(this.username), stringify(this.authToken))
     await this.http.post(
       this.baseUrl + '/api/logout',
       {
@@ -139,6 +148,8 @@ export class BackendService {
           this.currentUser = null;
           this.authToken = null;
           this.userType = null;
+          this.hallmeals = {};
+          this.dataSubject.next(this.hallmeals);
           console.log('Logged out')
           this.router.navigate(['/', 'auth']);
         } else {
@@ -179,6 +190,8 @@ export class BackendService {
           this.currentUser = res.userInfo;
           this.authToken = authToken;
           this.userType = res.userType;
+          this.hallmeals = {};
+          this.dataSubject.next(this.hallmeals);
           if(this.userType == 'student'){
             this.router.navigate(['/', 'student']);
           } else {
@@ -186,6 +199,155 @@ export class BackendService {
           }
         } else {
           console.log(res);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
+
+  async getextras(hall: string){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null || !(hall)) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/extras',
+      {
+        username,
+        authToken,
+        hall
+      },
+      httpOptions
+    ).subscribe(
+      (res:any) => {
+        if(res.code == 'success'){
+          this.hallmeals[hall] = res.data;
+        } else {
+          console.log("Error", res);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
+
+  async updateExtra(
+    meal : any,
+    extra: any
+  ){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/updextras',
+      {
+        username,
+        authToken,
+        extra,
+      },
+      httpOptions
+    ).subscribe(
+      async (res:any) => {
+        if(res.code == 'success'){
+          await this.getextras(meal['hall']);
+          this.dataSubject.next(this.hallmeals);
+        } else {
+          console.log("Err", res);
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+
+  async addExtra(
+    meal : any,
+    extra: any
+  ){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/addextras',
+      {
+        username,
+        authToken,
+        meal,
+        extra,
+      },
+      httpOptions
+    ).subscribe(
+      async (res:any) => {
+        if(res.code == 'success'){
+          await this.getextras(meal['hall']);
+          this.dataSubject.next(this.hallmeals);
+        } else {
+          console.log("Err", res);
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+
+  async deleteExtra(
+    hall:string,
+    extra: any
+  ){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/deleteextras',
+      {
+        username,
+        authToken,
+        extra,
+      },
+      httpOptions
+    ).subscribe(
+      async (res: any) => {
+        if(res.code == 'success'){
+          await this.getextras(hall);
+          this.dataSubject.next(this.hallmeals);
+        } else {
+          console.log("Err", res);
         }
       },
       (err) => {

@@ -1,1 +1,51 @@
-<h1>Student Book </h1>
+<div class="container" *ngIf="user!==null">
+  <h5>Hi {{user['n']}},</h5>
+  <hr>
+  <div class="container">
+    <div class="row">
+      <div class="col" *ngFor = "let day of days; let i = index;">
+        <button class="btn btn-primary"(click)="Show(i)">{{day}}</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="container" *ngIf="currentDay!==null">
+    <h4>Date: {{getDate(currentDay)}}</h4>
+    <hr>
+    <div class="row">
+      <label for="Breakfast"><h3>Breakfast</h3></label>
+      <div class="container">
+        <div class="row" *ngFor="let ext of mealsB; let i = index">
+          <app-admin-extra [extra]="ext" [mode]="'BOOK'"></app-admin-extra>
+        </div>
+        <div class="row"  *ngIf="mealsB.length==0">
+          <h5>Whoops, no extra is planned for this meal!</h5>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <label for="Lunch"><h3>Lunch</h3></label>
+      <div class="container">
+        <div class="row" *ngFor="let ext of mealsL; let i = index">
+          <app-admin-extra [extra]="ext" [mode]="'BOOK'"></app-admin-extra>
+        </div>
+        <div class="row"  *ngIf="mealsL.length==0">
+          <h5>Whoops, no extra is planned for this meal!</h5>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <label for="Dinner"><h3>Dinner</h3></label>
+      <div class="container">
+        <div class="row" *ngFor="let ext of mealsD; let i = index">
+          <app-admin-extra [extra]="ext" [mode]="'BOOK'"></app-admin-extra>
+        </div>
+        <div class="row"  *ngIf="mealsD.length==0">
+          <h5>Whoops, no extra is planned for this meal!</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

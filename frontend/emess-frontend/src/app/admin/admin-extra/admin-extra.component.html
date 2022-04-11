@@ -1,0 +1,120 @@
+<div class="container" *ngIf="mode=='UPDATE'&&extra!==null">
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="extraForm">
+        <label for = "name"> Name: </label>
+        <h4 class = "card-title"><input type = "text" formControlName = "name" class = "form-control"></h4>
+        <table class = "table">
+          <tbody>
+            <tr>
+              <th scope="row">Price</th>
+              <td><input type = "text" formControlName = "price" class = "form-control"></td>
+            </tr>
+            <tr>
+              <th scope="row">Max Quantity available</th>
+              <td><input type = "text" formControlName = "max_amount" class = "form-control"></td>
+            </tr>
+            <tr>
+              <th scope="row">Limit per Student</th>
+              <td><input type = "text" formControlName = "limit" class = "form-control"></td>
+            </tr>
+          </tbody>
+          <label for = "button"></label>
+          <div class="row">
+            <div class="col-6">
+              <button class="btn btn-primary" (click)="Update()">
+                Update
+              </button>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-danger" (click)="Delete()">
+                Delete
+              </button>
+            </div>
+          </div>
+
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="container" *ngIf="mode=='ADD'">
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="extraForm">
+        <label for = "name"> Name: </label>
+        <h4 class = "card-title"><input type = "text" formControlName = "name" class = "form-control"></h4>
+        <table class = "table">
+          <tbody>
+            <tr>
+              <th scope="row">Price</th>
+              <td><input type = "text" formControlName = "price" class = "form-control"></td>
+            </tr>
+            <tr>
+              <th scope="row">Max Quantity available</th>
+              <td><input type = "text" formControlName = "max_amount" class = "form-control"></td>
+            </tr>
+            <tr>
+              <th scope="row">Limit per Student</th>
+              <td><input type = "text" formControlName = "limit" class = "form-control"></td>
+            </tr>
+            <tr>
+              <th scope="row">Weeks to Repeat</th>
+              <td>
+                <select formControlName="weeks" id="weeks">
+                  <option *ngFor="let i of rnum(9)" [ngValue]="i+1">
+                    {{ i+1 }}
+                  </option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+          <label for = "button"></label>
+          <div class="row">
+            <div class="col-6">
+              <button class="btn btn-success" (click)="Add()">
+                Add
+              </button>
+            </div>
+          </div>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="container" *ngIf="mode=='BOOK'&&extra!==null">
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="bookForm">
+        <!-- <label for = "name"> Name: </label> -->
+        <h4 class = "card-title">{{extra[1]['name']}}</h4>
+        <table class = "table">
+          <tbody>
+            <tr>
+              <th scope="row">Price</th>
+              <td>{{extra[1]['price']  | currency:'INR':'symbol'}}</td>
+            </tr>
+            <tr>
+              <th scope="row">Quantity</th>
+              <td>
+                <select formControlName="quantity" id="quantity">
+                  <option *ngFor="let i of rnum(extra[1]['limit'])" [ngValue]="i+1">
+                    {{ i+1 }}
+                  </option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+          <label for = "button"></label>
+          <div class="row">
+            <div class="col-6">
+              <button class="btn btn-success" (click)="Book()">
+                Book
+              </button>
+            </div>
+          </div>
+        </table>
+      </form>
+    </div>
+  </div>
+</div>
