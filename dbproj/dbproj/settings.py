@@ -138,11 +138,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:4200"
+    "http://127.0.0.1:4200",
+    "https://emess-iitk.herokuapp.com",
+    "http://emess-iitk.herokuapp.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://emess-iitk.herokuapp.com",
+    "http://emess-iitk.herokuapp.com",
     "http://127.0.0.1:4200"
 ]
 CORS_ALLOW_HEADERS = list(default_headers) + [
