@@ -156,8 +156,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'emess.iitk@gmail.com'
 EMAIL_HOST_PASSWORD = None
 import os
-path = os.path.join(os.getcwd(), '../../keys.txt')
-with open(path) as f:
-    EMAIL_HOST_PASSWORD = f.readline().strip('\n')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 import django_heroku
 django_heroku.settings(locals())
