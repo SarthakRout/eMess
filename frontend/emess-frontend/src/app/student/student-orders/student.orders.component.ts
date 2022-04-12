@@ -23,7 +23,7 @@ export class StudentOrdersComponent implements OnInit{
         setTimeout( ()=> {
           this.getOrder();
           // console.log(this.fca);
-        }, 200)
+        }, 500)
       }
     )
   }

@@ -26,7 +26,7 @@ export class StudentHomeComponent implements OnInit {
       setTimeout( ()=> {
         // console.log(this.backendService.hallmeals);
         this.Show(((new Date()).getDay()+ 7)%7)
-      }, 200);
+      }, 500);
     }
     this.backendService.dataSubject.subscribe(
       async val => {
@@ -34,7 +34,7 @@ export class StudentHomeComponent implements OnInit {
           setTimeout( ()=> {
             // console.log(this.backendService.hallmeals);
             document.getElementById(this.user['h'] +  "_" + JSON.stringify((this.idx)%7)).click();
-          }, 200);
+          }, 500);
         }
       }
     );

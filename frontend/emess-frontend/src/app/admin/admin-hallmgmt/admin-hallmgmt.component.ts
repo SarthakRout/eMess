@@ -28,7 +28,7 @@ export class AdminHallMgmtComponent implements OnInit {
           setTimeout( ()=> {
             // console.log(this.backendService.hallmeals);
             document.getElementById(JSON.stringify(this.hall_no) +  "_" + JSON.stringify((this.idx)%7)).click();
-          }, 200);
+          }, 500);
         }
       }
     );
