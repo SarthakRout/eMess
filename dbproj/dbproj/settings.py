@@ -158,4 +158,5 @@ EMAIL_HOST_PASSWORD = None
 import os
 path = os.path.join(os.getcwd(), '../../keys.txt')
 with open(path) as f:
-    EMAIL_HOST_PASSWORD = f.readline().strip('\n')
+    EMAIL_HOST_PASSWORD = f.readline().strip('\n')import django_heroku
+django_heroku.settings(locals())
