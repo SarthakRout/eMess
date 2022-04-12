@@ -12,7 +12,8 @@ export interface meals {
   providedIn: 'root',
 })
 export class BackendService {
-  baseUrl = 'http://127.0.0.1:8000'
+  // baseUrl = 'http://127.0.0.1:8000'
+  baseUrl = 'https://emess-iitk.herokuapp.com'
   username = '';
   isLoggedIn = false;
   currentUser = null;
