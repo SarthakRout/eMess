@@ -65,7 +65,7 @@
               <th scope="row">Weeks to Repeat</th>
               <td>
                 <select formControlName="weeks" id="weeks">
-                  <option *ngFor="let i of rnum(9)" [ngValue]="i+1">
+                  <option *ngFor="let i of rnum('9')" [ngValue]="i+1">
                     {{ i+1 }}
                   </option>
                 </select>

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin/admin.component';
-import { AuthLogoutComponent } from './auth/auth-logout/auth-logout.component';
 import { AuthComponent } from './auth/auth.component';
 import { StudentComponent } from './student/student.component';
 
@@ -10,7 +9,6 @@ const routes: Routes = [
   {path: 'auth', component: AuthComponent},
   {path: 'student', component: StudentComponent},
   {path: 'messadmin', component: AdminComponent},
-  {path: 'logout', component: AuthLogoutComponent},
   {path: '**', redirectTo: 'auth'}
 ];
 

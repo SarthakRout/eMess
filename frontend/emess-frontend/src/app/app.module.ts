@@ -8,7 +8,6 @@ import { AdminModule } from './admin/admin.module';
 import { BackendService } from './shared/backend.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { AuthLogoutComponent } from './auth/auth-logout/auth-logout.component';
 
 @NgModule({
   declarations: [
