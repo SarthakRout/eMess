@@ -6,6 +6,7 @@ import { AdminExtraComponent } from './admin-extra/admin-extra.component';
 import { AdminHallMgmtComponent } from './admin-hallmgmt/admin-hallmgmt.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { AdminRoutingModule } from './admin-routing.module';
+import { AdminSearchComponent } from './admin-search/admin-search.component';
 import { AdminStatComponent } from './admin-stat/admin-stat.component';
 import { AdminComponent } from './admin.component';
 
@@ -15,7 +16,8 @@ import { AdminComponent } from './admin.component';
     AdminHomeComponent,
     AdminHallMgmtComponent,
     AdminStatComponent,
-    AdminExtraComponent
+    AdminExtraComponent,
+    AdminSearchComponent
   ],
   imports: [
     CommonModule,
@@ -30,6 +32,7 @@ import { AdminComponent } from './admin.component';
     AdminHallMgmtComponent,
     AdminStatComponent,
     AdminExtraComponent,
+    AdminSearchComponent,
     RouterModule
   ]
 })

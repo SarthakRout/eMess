@@ -144,21 +144,33 @@ export class BackendService {
     ).subscribe(
       (res : any) => {
         if(res.code == 'success') {
+          console.log('Logged out');
           this.username = null;
           this.currentUser = null;
           this.authToken = null;
           this.userType = null;
           this.hallmeals = {};
           this.dataSubject.next(this.hallmeals);
-          console.log('Logged out')
           this.router.navigate(['/', 'auth']);
         } else {
           console.log(res);
+          this.username = null;
+          this.currentUser = null;
+          this.authToken = null;
+          this.userType = null;
+          this.hallmeals = {};
+          this.dataSubject.next(this.hallmeals);
           this.router.navigate(['/', 'auth']);
         }
       },
       (err) => {
         console.log(err);
+        this.username = null;
+        this.currentUser = null;
+        this.authToken = null;
+        this.userType = null;
+        this.hallmeals = {};
+        this.dataSubject.next(this.hallmeals);
         this.router.navigate(['/', 'auth']);
       }
     )
@@ -353,6 +365,186 @@ export class BackendService {
       (err) => {
         console.log(err);
       }
+    )
+  }
+
+  async bookExtra(
+    extra: any,
+    quantity: number
+  ){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/book',
+      {
+        username,
+        authToken,
+        extra,
+        quantity
+      },
+      httpOptions
+    ).subscribe(
+      async (res: any) => {
+        if(res.code == 'success'){
+          console.log("Booked successfully");
+        } else {
+          console.log("Err", res);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
+
+  getOrders(){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    return this.http.post(
+      this.baseUrl + '/api/orders',
+      {
+        username,
+        authToken,
+      },
+      httpOptions
+    )
+  }
+
+  async deleteOrder(order){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/deleteorder',
+      {
+        username,
+        authToken,
+        order,
+      },
+      httpOptions
+    ).subscribe(
+      async (res: any) => {
+        if(res.code == 'success'){
+          this.dataSubject.next(true);
+          console.log("Deleted successfully");
+        } else {
+          console.log("Err", res);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
+
+  async updateOrder(
+    order
+  ){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    await this.http.post(
+      this.baseUrl + '/api/updateorder',
+      {
+        username,
+        authToken,
+        order,
+      },
+      httpOptions
+    ).subscribe(
+      async (res: any) => {
+        if(res.code == 'success'){
+          this.dataSubject.next(true);
+          console.log("Updated successfully");
+        } else {
+          console.log("Err", res);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    )
+  }
+  async getTot(hall? : string){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    return this.http.post(
+      this.baseUrl + '/api/total',
+      {
+        username,
+        authToken,
+        hall
+      },
+      httpOptions
+    )
+  }
+  async search(
+    hall, extra_name, date
+  ){
+    const username = this.username;
+    const authToken = this.authToken;
+    if (username == null || authToken == null ) {
+      return;
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-CSRFToken': this.getCookie('csrftoken'),
+      }),
+      withCredentials: true
+    };
+    return this.http.post(
+      this.baseUrl + '/api/search',
+      {
+        username,
+        authToken,
+        hall,
+        extra_name,
+        date
+      },
+      httpOptions
     )
   }
 }

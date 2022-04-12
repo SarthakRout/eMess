@@ -1,5 +1,5 @@
 <div class="container" *ngIf="mode=='UPDATE'&&extra!==null">
-  <div class="card">
+  <div class="card bg-light">
     <div class="card-body">
       <form [formGroup]="extraForm">
         <label for = "name"> Name: </label>
@@ -20,18 +20,21 @@
             </tr>
           </tbody>
           <label for = "button"></label>
-          <div class="row">
-            <div class="col-6">
-              <button class="btn btn-primary" (click)="Update()">
-                Update
-              </button>
-            </div>
-            <div class="col-6">
-              <button class="btn btn-danger" (click)="Delete()">
-                Delete
-              </button>
+          <div class="container">
+            <div class="row">
+              <div class="col-6">
+                <button class="btn btn-primary" (click)="Update()">
+                  Update
+                </button>
+              </div>
+              <div class="col-6">
+                <button class="btn btn-danger" (click)="Delete()">
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
+
 
         </table>
       </form>
@@ -39,7 +42,7 @@
   </div>
 </div>
 <div class="container" *ngIf="mode=='ADD'">
-  <div class="card">
+  <div class="card bg-light">
     <div class="card-body">
       <form [formGroup]="extraForm">
         <label for = "name"> Name: </label>
@@ -83,12 +86,12 @@
   </div>
 </div>
 <div class="container" *ngIf="mode=='BOOK'&&extra!==null">
-  <div class="card">
+  <div class="card bg-info text-white">
     <div class="card-body">
       <form [formGroup]="bookForm">
         <!-- <label for = "name"> Name: </label> -->
         <h4 class = "card-title">{{extra[1]['name']}}</h4>
-        <table class = "table">
+        <table class = "table text-white">
           <tbody>
             <tr>
               <th scope="row">Price</th>
@@ -108,7 +111,7 @@
           <label for = "button"></label>
           <div class="row">
             <div class="col-6">
-              <button class="btn btn-success" (click)="Book()">
+              <button class="btn btn-success border border-dark" (click)="Book()">
                 Book
               </button>
             </div>

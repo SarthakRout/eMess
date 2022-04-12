@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
+import { AdminSearchComponent } from './admin-search/admin-search.component';
 import { AdminStatComponent } from './admin-stat/admin-stat.component';
 import { AdminComponent } from './admin.component';
 
@@ -12,6 +13,7 @@ const route: Routes = [
       {path: '', redirectTo: 'home', pathMatch: 'full'},
       {path: 'home', component: AdminHomeComponent},
       {path: 'stat', component: AdminStatComponent},
+      {path: 'search', component: AdminSearchComponent},
       {path: '**', redirectTo: 'home'}
     ]
   }

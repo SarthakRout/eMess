@@ -3,7 +3,8 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.conf import settings
 from django.core.mail import send_mail
-from emess.models import ExtraItem, Meal, Student, MessAdmin
+from django.db.models import Sum, F
+from emess.models import ExtraItem, Meal, Student, MessAdmin, Order
 import random
 import time
 import hashlib
@@ -218,7 +219,7 @@ def logout(request):
                     'code': 'invalid authToken'
                 })
         elif MessAdmin.objects.filter(username=data["username"]).exists():
-            if 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data['authToken']:
+            if data["username"] in messadmins and 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data['authToken']:
                 messadmins[data["username"]]['token'] = None
                 res = JsonResponse({
                     'code' : 'success'
@@ -313,7 +314,7 @@ def gethallextras(request):
                 return JsonResponse({
                     'code' : 'invalid authToken'
                 })
-        elif MessAdmin.objects.filter(username=data["username"]):
+        elif MessAdmin.objects.filter(username=data["username"]).exists():
             if data["username"] in messadmins and 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data["authToken"]:
                 info = []
                 u = datetime.datetime.now().date() + datetime.timedelta(8)
@@ -367,6 +368,22 @@ def updateextras(request):
     else:
         return HttpResponseForbidden()
 
+def getstart(mt):
+    if mt == 'B':
+        return datetime.time(7, 30)
+    if mt == 'L':
+        return datetime.time(12, 30)
+    if mt == 'D':
+        return datetime.time(19, 30)
+
+def getend(mt):
+    if mt == 'B':
+        return datetime.time(9, 30)
+    if mt == 'L':
+        return datetime.time(2, 30)
+    if mt == 'D':
+        return datetime.time(21, 30)
+
 @ensure_csrf_cookie
 def addextras(request):
     if request.method == 'POST':
@@ -387,15 +404,15 @@ def addextras(request):
                             hall=meal["hall"],
                             meal_date=st_date,
                             meal_type=meal["meal_type"],
-                            meal_start_time=datetime.time(12, 0),
-                            meal_end_time=datetime.time(12, 0),
+                            meal_start_time=getstart(meal["meal_type"]),
+                            meal_end_time=getend(meal["meal_type"]),
                         )
                     mealobj = Meal.objects.get(
                         hall=meal["hall"],
                         meal_date=st_date,
                         meal_type=meal["meal_type"],
-                        meal_start_time=datetime.time(12, 0),
-                        meal_end_time=datetime.time(12, 0),
+                        meal_start_time=getstart(meal["meal_type"]),
+                        meal_end_time=getend(meal["meal_type"]),
                     )
                     st_date = st_date + datetime.timedelta(days=7)
                     ExtraItem.objects.create(
@@ -434,6 +451,234 @@ def deleteextras(request):
                 print("Successful delete", data)
                 return JsonResponse({
                     'code' : 'success',
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+@ensure_csrf_cookie
+def book(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if 'token' in students[int(data["username"])] and students[int(data["username"])]['token'] == data["authToken"]:
+                extra = data["extra"]
+                quan = int(data["quantity"])
+                cur = Order.objects.filter(extra_item_id=extra['id']).aggregate(Sum('quantity'))['quantity__sum']
+                if cur and cur + quan > int(extra['max_amount']):
+                    return JsonResponse({
+                        'code': 'invalid request',
+                        'msg' : 'exceeding max_amount for quantity'
+                    })
+                if Order.objects.filter(extra_item_id = extra['id'], roll_id=int(data["username"])).exists():
+                    return JsonResponse({
+                        'code': 'invalid request',
+                        'msg': 'one person can only book one extra item once per meal'
+                    })
+                Order.objects.create(
+                    roll_id = int(data["username"]),
+                    extra_item_id = extra['id'],
+                    quantity = quan,
+                    booking_price = extra['price'],
+                )
+                return JsonResponse({
+                    'code' : 'success',
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+def dt(t: datetime.datetime):
+    return (t + datetime.timedelta(hours=5, minutes=30)).isoformat(' ').split('.')[0]
+
+def getOrders(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if 'token' in students[int(data["username"])] and students[int(data["username"])]['token'] == data["authToken"]:
+                info = []
+                for order in Order.objects.filter(roll_id=int(data["username"])).all():
+                    info.append({
+                        'id' : order.id,
+                        'extra_name': order.extra_item.name,
+                        'extra_item_id': order.extra_item_id,
+                        'quantity': order.quantity,
+                        'booking_price': order.booking_price,
+                        'booked_at': dt(order.booked_at),
+                        'last_mod_at': dt(order.last_modified_at),
+                        'meal_date': order.extra_item.meal.meal_date
+                    })
+                return JsonResponse({
+                    'code' : 'success',
+                    'data' : info
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        elif MessAdmin.objects.filter(username=data["username"]).exists():
+            if data["username"] in messadmins and 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data["authToken"]:
+                messadmin = MessAdmin.objects.get(username=data["username"])
+                hallinfo = {}
+                for hall in messadmin.halls:
+                    info = []
+                    for order in Order.objects.filter(extra_item__meal__hall=int(hall)).all():
+                        info.append({
+                            'id' : order.id,
+                            'extra_name': order.extra_item.name,
+                            'extra_item_id': order.extra_item_id,
+                            'quantity': order.quantity,
+                            'booking_price': order.booking_price,
+                            'booked_at': dt(order.booked_at),
+                            'last_mod_at': dt(order.last_modified_at),
+                            'meal_date': order.extra_item.meal.meal_date
+                        })
+                    hallinfo[hall] = info
+                return JsonResponse({
+                    'code' : 'success',
+                    'data' : hallinfo
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+@ensure_csrf_cookie
+def deleteOrder(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if 'token' in students[int(data["username"])] and students[int(data["username"])]['token'] == data["authToken"]:
+                order = data["order"]
+                if not Order.objects.filter(
+                    id=order['id']
+                ).exists():
+                    return JsonResponse({
+                        'code': 'invalid request',
+                        'msg': 'order is not present'
+                    }) 
+                Order.objects.filter(
+                    id=order['id']
+                ).delete()
+                return JsonResponse({
+                    'code' : 'success',
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+@ensure_csrf_cookie
+def updateOrder(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if 'token' in students[int(data["username"])] and students[int(data["username"])]['token'] == data["authToken"]:
+                order = data["order"]
+                if not Order.objects.filter(
+                    id=order['id']
+                ).exists():
+                    return JsonResponse({
+                        'code': 'invalid request',
+                        'msg': 'order is not present'
+                    })
+                delta = int(order['delta'])
+                ei = ExtraItem.objects.get(id = order['extra_item_id'])
+                cur = Order.objects.filter(extra_item_id=order['extra_item_id']).aggregate(Sum('quantity'))['quantity__sum']
+                if cur and cur + delta > int(ei.max_amount):
+                    return JsonResponse({
+                        'code': 'invalid request',
+                        'msg': 'max_amount limit exceeded'
+                    })
+                Order.objects.filter(
+                    id=order['id']
+                ).update(
+                    quantity=int(order['quantity'])
+                )
+                return JsonResponse({
+                    'code' : 'success',
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+@ensure_csrf_cookie
+def getTot(request):
+    if(request.method == 'POST'):
+        data = json.loads(request.body)
+        if Student.objects.filter(username=data["username"]).exists():
+            if 'token' in students[int(data["username"])] and students[int(data["username"])]['token'] == data["authToken"]:
+                tot = Order.objects.filter(roll_id=int(data["username"])).aggregate(sum=Sum(F('booking_price')*F('quantity')))["sum"]
+                return JsonResponse({
+                    'code' : 'success',
+                    'total' : tot
+                })
+            else:
+                return JsonResponse({
+                    'code' : 'invalid authToken'
+                })
+        elif MessAdmin.objects.filter(username=data["username"]).exists():
+            if data["username"] in messadmins and 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data["authToken"]:
+                hall = int(data["hall"])
+                data = list(Order.objects.filter(extra_item__meal__hall=hall).values('roll').order_by('roll').annotate(total=Sum(F('booking_price')*F('quantity'))))
+                return JsonResponse({
+                    'code': 'success',
+                    'data' : data
+                })
+        else:
+            return JsonResponse({
+                'code': 'invalid username'
+            })
+    else:
+        return HttpResponseForbidden()
+
+@ensure_csrf_cookie
+def search(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        if MessAdmin.objects.filter(username=data["username"]):
+            if data["username"] in messadmins and 'token' in messadmins[data["username"]] and messadmins[data["username"]]['token'] == data["authToken"]:
+                hall = data["hall"]
+                extra_name = data["extra_name"]
+                date = (datetime.datetime.fromisoformat(data["date"][:-1]) + datetime.timedelta(hours=5, minutes=30)).date()
+                info = list(Order.objects.filter(extra_item__meal__hall=hall, extra_item__name=extra_name, extra_item__meal__meal_date=date).values('roll', 'quantity'))
+                print(info, hall, extra_name, date)
+                return JsonResponse({
+                    'code' : 'success',
+                    'data' : info
                 })
             else:
                 return JsonResponse({

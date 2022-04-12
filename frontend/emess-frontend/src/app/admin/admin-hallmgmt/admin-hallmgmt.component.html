@@ -4,6 +4,7 @@
   <div class="container">
     <div class="row">
       <div class="col" *ngFor = "let day of days; let i = index;">
+        <label>{{getDate(day)}}&nbsp;</label>
         <button class="btn btn-primary" (click)="Show(i)" id="{{hall_no}}_{{i}}">{{day}}</button>
       </div>
     </div>
@@ -15,13 +16,13 @@
     <div class="row">
       <label for="Breakfast"><h3>Breakfast</h3></label>
       <div class="container">
-        <div class="row" *ngFor="let ext of mealsB;  let i = index">
+        <div class="row py-2" *ngFor="let ext of mealsB;  let i = index">
           <app-admin-extra [extra]="ext"></app-admin-extra>
         </div>
       </div>
       <hr>
       <div class="container">
-        <div class="row">
+        <div class="row py-2">
           <app-admin-extra [mode]="'ADD'" [extra]="['B', currentDay, hall_no]"></app-admin-extra>
         </div>
       </div>
@@ -30,13 +31,13 @@
     <div class="row">
       <label for="Lunch"><h3>Lunch</h3></label>
       <div class="container">
-        <div class="row" *ngFor="let ext of mealsL;  let i = index">
+        <div class="row py-2" *ngFor="let ext of mealsL;  let i = index">
           <app-admin-extra [extra]="ext"></app-admin-extra>
         </div>
       </div>
       <hr>
       <div class="container">
-        <div class="row">
+        <div class="row py-2">
           <app-admin-extra [mode]="'ADD'" [extra]="['L', currentDay, hall_no]"></app-admin-extra>
         </div>
       </div>
@@ -45,13 +46,13 @@
     <div class="row">
       <label for="Dinner"><h3>Dinner</h3></label>
       <div class="container">
-        <div class="row" *ngFor="let ext of mealsD;  let i = index">
+        <div class="row py-2" *ngFor="let ext of mealsD;  let i = index">
           <app-admin-extra [extra]="ext"></app-admin-extra>
         </div>
       </div>
       <hr>
       <div class="container">
-        <div class="row">
+        <div class="row py-2">
           <app-admin-extra [mode]="'ADD'" [extra]="['D', currentDay, hall_no]"></app-admin-extra>
         </div>
       </div>

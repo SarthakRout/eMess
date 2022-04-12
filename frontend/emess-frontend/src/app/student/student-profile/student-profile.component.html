@@ -2,7 +2,7 @@
   <h1>{{user['n']}}</h1>
   <hr>
   <div class="row justify-content-center">
-    <div class="card" style="width: 18rem;">
+    <div class="card bg-light" style="width: 25rem;">
       <img class="card-img-top" [src]="link" width="35%" (error)="handle($event)" alt="Profile Picture">
       <div class="card-body">
         <h5 class="card-title">Student Profile</h5>
@@ -23,9 +23,15 @@
                 Hall: {{user['h']}}
               </div>
             </div>
+            <div class="row" *ngIf="total>=0">
+              <div class="col-6">
+                Total Amount: {{total}}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <hr>
 </div>

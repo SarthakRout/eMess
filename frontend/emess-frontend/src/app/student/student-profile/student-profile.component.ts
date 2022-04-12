@@ -10,6 +10,7 @@ import { BackendService } from 'src/app/shared/backend.service';
   styleUrls: ['./student-profile.component.css']
 })
 export class StudentProfileComponent implements OnInit, OnDestroy {
+  total = -1;
   constructor(
     private backendService: BackendService,
     private router: Router,
@@ -23,12 +24,24 @@ export class StudentProfileComponent implements OnInit, OnDestroy {
   };
   link = "";
   links = []
-  ngOnInit(): void {
+  async ngOnInit() {
     console.log('Initialised Student Profile Component');
     if (this.backendService.currentUser !== null) {
       this.user = this.backendService.currentUser;
       this.links.push(this.gen(this.user['g']), this.oa(this.user['i']))
       this.link = this.dp(this.user['u']);
+      await (await this.backendService.getTot()).subscribe(
+        async (res: any) => {
+          if(res.code == 'success'){
+            this.total = res.total;
+          } else {
+            console.log("Err", res);
+          }
+        },
+        (err) => {
+          console.log("Err", err);
+        }
+      );
     }
 
   }

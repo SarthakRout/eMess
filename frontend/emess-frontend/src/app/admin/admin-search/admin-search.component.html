@@ -1,0 +1,53 @@
+<div class="container">
+  <form [formGroup]="searchForm">
+    <div class="container">
+      <label for="hall">Hall:</label>
+      <div class="row">
+        <div class="col">
+          <select formControlName="hall" id="hall">
+            <option *ngFor="let hall of halls" [ngValue]="hall">
+              {{ hall }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <hr>
+      <label>Meal Date: </label>
+      <div class="row">
+        <div class="col">
+          <select formControlName="date" id="date">
+            <option *ngFor="let i of dates" [ngValue]="i">
+              {{ i }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <hr>
+      <label>Name of Extra:</label>
+      <div class="row">
+        <div class="col">
+          <input type="text" formControlName="extra_name" class="form-control">
+        </div>
+      </div>
+      <hr>
+      <button class="btn btn-success" (click)="Submit()">
+        Submit
+      </button>
+    </div>
+  </form>
+  <hr>
+  <div class="container" *ngIf="result!==null">
+    <table class ="table">
+      <thead>
+        <th scope="col">Roll</th>
+        <th scope="col">Quantity</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let res of result;">
+          <th scope="row">{{res['roll']}}</th>
+          <td>{{res['quantity']}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<h1>Orders by student:</h1>
+<div class="container" *ngIf="orders.length>0">
+  <form formArrayname="fca">
+    <div class="row py-2" *ngFor="let order of orders; let i = index;">
+      <div class="card" style="width: 50rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{order['extra_name']}}</h5>
+          <div class="container">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <th scope="row">Quantity</th>
+                  <td><input type="text" class ='form-control' [formControl]="fca.controls[i]" ></td>
+                </tr>
+                <tr>
+                  <th scope="row">Price</th>
+                  <td>{{order['booking_price'] |  currency:'INR':'symbol'}}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Total</th>
+                  <td>{{(order['booking_price'] * order['quantity']) |  currency:'INR':'symbol'}}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Meal Date</th>
+                  <td>{{order['meal_date']}}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Booked At</th>
+                  <td>{{order['booked_at']}}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Last Modified At</th>
+                  <td>{{order['last_mod_at']}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <label for = "button"></label>
+            <div class="row" *ngIf="canModify(order)==true">
+              <div class="col-6">
+                <button class="btn btn-info" (click)="Update(order, i)">
+                  Update
+                </button>
+              </div>
+              <div class="col-6">
+                <button class="btn btn-danger" (click)="Delete(order)">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class = "container" *ngIf="orders.length==0">
+  <div class="card">
+    <div class="card-body">
+      <div class="card-text">
+        <h3>Whoops, looks like there are no orders!</h3>
+      </div>
+    </div>
+  </div>
+</div>

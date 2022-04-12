@@ -1,1 +1,33 @@
-<h1>Hello From Admin Stat Component</h1>
+<div class="container">
+  <h2>Hall Resident Accounts</h2>
+  <hr>
+  <div class="container" *ngIf="studacc!==null">
+    <div id="accordion">
+      <div class="card my-2" *ngFor="let hall of halls; let i = index">
+        <div class="card-header" [id]="'heading'+i">
+          <h5 class="mb-0">
+            <button class = "btn btn-link collapsed" data-toggle="collapse" [attr.data-target]="'#collapse'+i" aria-expanded="false" [attr.aria-controls]="'collapse'+i" [attr.data-parent]="'#collapse' + i">
+            Hall {{hall}} Accounts
+            </button>
+          </h5>
+        </div>
+        <div [id]="'collapse'+i" class="collapse" [attr.aria-labelledby]="'heading'+i" data-parent="#accordion">
+          <table class ="table">
+            <thead>
+              <tr>
+                <th scope="col">Roll</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let acc of studacc[hall];">
+                <th scope="row">{{acc['roll']}}</th>
+                <td>{{acc['total'] | currency:'INR':'symbol'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

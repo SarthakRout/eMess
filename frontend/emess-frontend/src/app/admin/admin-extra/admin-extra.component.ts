@@ -98,7 +98,8 @@ export class AdminExtraComponent implements OnInit, OnChanges {
   }
   async Book(){
     console.log("Book");
-    console.log(this.bookForm.get('quantity'));
+    // console.log(this.bookForm.get('quantity').value, this.extra);
+    await this.backendService.bookExtra(this.extra[1], this.bookForm.get('quantity').value);
   }
 
   rnum(val: string){
