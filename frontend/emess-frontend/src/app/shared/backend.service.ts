@@ -61,6 +61,7 @@ export class BackendService {
       (res: LoginResponse ) => {
         if (res.code === 'success') {
           console.log('Login Successful', res);
+          alert("Login Successful");
           this.username = username
           this.isLoggedIn = true;
           this.currentUser = res.userInfo;
@@ -79,8 +80,10 @@ export class BackendService {
         } else {
           if (res.code === 'invalid_username') {
             console.log('Invalid Username', res);
+            alert("Invalid username");
           } else {
             console.log('Invalid Password', res);
+            alert("Invalid password");
           }
           // Show a popup under the login button that login failed
           // Don't redirect
@@ -109,11 +112,13 @@ export class BackendService {
       (res: GenpwdResponse) => {
         if (res.code === 'success') {
           console.log('Password successfully generated!', res);
+          alert("Password generated successfully! Check your mail");
           // Show popup that password has been generated successfully.
           // redirect to login page
         } else {
           if (res.code === 'invalid_roll') {
             console.log('Invalid roll', res);
+            alert("Invalid roll number")
             // Let the user try again
             // Say that roll number is invalid
           } else {
@@ -199,6 +204,7 @@ export class BackendService {
     ).subscribe(
       (res: any) => {
         if(res.code == 'success'){
+
           this.username = username
           this.currentUser = res.userInfo;
           this.authToken = authToken;
@@ -244,6 +250,7 @@ export class BackendService {
       (res:any) => {
         if(res.code == 'success'){
           this.hallmeals[hall] = res.data;
+          // this.dataSubject.next(this.hallmeals[hall]);
         } else {
           console.log("Error", res);
         }
@@ -319,8 +326,10 @@ export class BackendService {
     ).subscribe(
       async (res:any) => {
         if(res.code == 'success'){
+          console.log("Added extra item")
           await this.getextras(meal['hall']);
           this.dataSubject.next(this.hallmeals);
+          console.log("Sent next message")
         } else {
           console.log("Err", res);
         }
@@ -397,6 +406,7 @@ export class BackendService {
       async (res: any) => {
         if(res.code == 'success'){
           console.log("Booked successfully");
+          alert("Booked Successfully");
         } else {
           console.log("Err", res);
         }
